@@ -16,6 +16,7 @@ unsigned int shift(unsigned int position, char direction);
 bool can_i_go(unsigned int position, char direction);
 unsigned int go_to(unsigned int position, unsigned int destination);
 bool is_next_empty(unsigned int position, char direction, char array[]);
+bool array_full(char array[],unsigned int position);
 
 using namespace std;
 //
@@ -419,10 +420,10 @@ char get_direction(unsigned int position, char array[]) { //returns the most eff
 
 //Misc. Low Level Functions
 
-bool can_i_go(unsigned int position, char direction) { 
+bool can_i_go(unsigned int position, char direction) {
 
 	if(position == 20 && direction == 'R') return false;
-	
+
 	if(position == 1 && direction == 'L') return false;
 
 	return true;
@@ -456,14 +457,44 @@ unsigned int shift(unsigned int position, char direction) { //returns new positi
 	if(direction == 'R') return shift_right(position);
 
 	if(direction == 'L') return shift_left(position);
-	
+
 	if(DEBUG) cout << "\nThere has been an oof: shift function returning origincal position.i\n";
 
 	return position;
 }
 
+bool array_full(char array[],unsigned int position)
+{
+	position = go_to(position,1);
+	while(position != 20)
+	{
+		if(test_empty(position,array))
+		{
+			return false;
+		}
+		else if (!test_empty(position,array))
+		{
+			if(!can_i_go(position,'R'))
+			{
+				return true;
+			}
+			else if(can_i_go(position,'R'))
+			{
+				shift(position,'R');
+			}
+			else
+			{
+				cerr << "circumstantial oof" << endl;
+			}
+		}
+		else
+		{
+			cerr << "circumstantial oof" << endl;
+		}
+	}
+}
 unsigned int go_to(unsigned int position, unsigned int destination) { //returns the new position
-	
+
 	do {
 		position = shift(position, 'L'); }
 	while(position != 1);
