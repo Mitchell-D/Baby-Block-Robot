@@ -534,12 +534,25 @@ char cascade_move(char array[], char direction, char robot, char position)
 int main()
 {
 
+	unsigned int position = 0;
+
+	cout <<"Enter starting position: ";
+	cin >> position;
+
 	char arr[20];
+	char robot = ' ';
+
 	for(int  i = 0; i < 20; i++) {
-	
 		arr[i] = ' ';
 	}
 		
+	while(array_fall(arr)) {
+
+		robot = get_block_testone();
+		
+		
+	}
+
 
 	arr[5] = 'G';
 	arr[6] = 'H';
