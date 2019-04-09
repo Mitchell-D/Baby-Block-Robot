@@ -17,6 +17,7 @@ bool can_i_go(unsigned int position, char direction);
 unsigned int go_to(unsigned int position, unsigned int destination);
 bool is_next_empty(unsigned int position, char direction, char array[]);
 bool array_full(char array[],unsigned int position);
+char cascade_move(char array[], char direction, char robot, char position);
 
 using namespace std;
 //
@@ -488,6 +489,7 @@ bool array_full(char array[],unsigned int position)
 			cerr << "circumstantial oof" << endl;
 		}
 	}
+	return false;
 }
 unsigned int go_to(unsigned int position, unsigned int destination) { //returns the new position
 
@@ -501,7 +503,36 @@ unsigned int go_to(unsigned int position, unsigned int destination) { //returns 
 	return position;
 }
 
+char cascade_move(char array[], char direction, char robot, char position)
+{
+	if(test_empty(position,array))
+	{
+		put_block(robot,position,array);
+		return ' ';
+	}
+	else if(can_i_go(position,direction))
+	{
+		if(is_next_empty(position,direction,array))
+		{
+			robot = switch_blocks(robot,position,array);
+			position = shift(position,direction);
+			put_block(robot,position,array);
+			print_slots(array);
+			return robot;
+		}
+		else if(is_next_empty(position,direction,array))
+		{
+			robot = switch_blocks(robot,position,array);
+			position = shift(position,direction);
+			print_slots(array);
+		}
+	}
+	return robot;
+}
+
+
 int main()
 {
+
 	return 0;
 }
