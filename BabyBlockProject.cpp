@@ -376,11 +376,7 @@ char get_direction(unsigned int position, char array[]) { //returns the most eff
 	cout << "\n\nChecking right.\n\n";	
 	for(int i = 0; i < 20; i++) {
 		
-		
-
-
-
-		if(position == 20) {
+			if(position == 20) {
 			cout << endl << endl << "No spaces to the right.\n\n";
 			go_to(position, start);
 			return 'L'; }
