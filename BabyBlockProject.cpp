@@ -11,6 +11,13 @@
 #include <iomanip>
 #include <string>
 
+#define DEBUG 1
+
+unsigned int shift(unsigned int position, char direction);
+bool can_i_go(unsigned int position, char direction);
+unsigned int go_to(unsigned int position, unsigned int destination);
+bool is_next_empty(unsigned int position, char direction, char array[]);
+
 using namespace std;
 //
 // Function get_block
@@ -357,12 +364,12 @@ bool is_next_empty(unsigned int position, char direction, char array[]) { //assu
 	bool retval = false;
 
 	if(direction == 'R') {
-		position =  shift(position, direction);
+		position = shift(position, 'R');
 		retval = test_empty(position, array);
 		position = shift(position, 'L');
 	}
 	else if(direction == 'L') {
-		position = shift(position, direction);
+		position = shift(position, 'L');
 		retval = test_empty(position, array);
 		position = shift(position, 'R');
 	}
@@ -378,6 +385,8 @@ unsigned int shift(unsigned int position, char direction) { //returns new positi
 	if(direction == 'R') return shift_right(position);
 
 	if(direction == 'L') return shift_left(position);
+	
+	if(DEBUG) cout << "\nThere has been an oof: shift function returning origincal position.i\n";
 
 	return position;
 }
