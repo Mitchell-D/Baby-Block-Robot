@@ -336,7 +336,7 @@ char get_block_testfive(void)
 
 //Miscellaneous Low Level Functions
 
-bool can_i_go(int positioni, char direction) {
+bool can_i_go(int position, char direction) {
 
 	if(position == 20 && direction == 'R') return false;
 
