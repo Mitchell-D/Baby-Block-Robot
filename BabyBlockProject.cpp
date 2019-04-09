@@ -11,6 +11,14 @@
 #include <iomanip>
 #include <string>
 
+#define DEBUG 1
+
+unsigned int shift(unsigned int position, char direction);
+bool can_i_go(unsigned int position, char direction);
+unsigned int go_to(unsigned int position, unsigned int destination);
+bool is_next_empty(unsigned int position, char direction, char array[]);
+bool array_full(char array[],unsigned int position);
+
 using namespace std;
 //
 // Function get_block
@@ -343,7 +351,7 @@ char get_block_testfive(void)
 
 //Misc. Low Level Functions
 
-bool can_i_go(int position, char direction) {
+bool can_i_go(unsigned int position, char direction) {
 
 	if(position == 20 && direction == 'R') return false;
 
@@ -352,14 +360,26 @@ bool can_i_go(int position, char direction) {
 	return true;
 }
 
-bool is_next_empty(int position, char direction) {
+bool is_next_empty(unsigned int position, char direction, char array[]) { //assumes not at end, if at end it will return the state of the current slot
+
+	bool retval = false;
 
 	if(direction == 'R') {
-		position =
+		position = shift(position, 'R');
+		retval = test_empty(position, array);
+		position = shift(position, 'L');
+	}
+	else if(direction == 'L') {
+		position = shift(position, 'L');
+		retval = test_empty(position, array);
+		position = shift(position, 'R');
+	}
+
+	return retval;
 
 }
 
-int shift(int position, char direction) { //returns new position or -1 if cannot move
+unsigned int shift(unsigned int position, char direction) { //returns new position or -1 if cannot move
 
 	if(!can_i_go(position, direction)) return position;
 
@@ -367,19 +387,21 @@ int shift(int position, char direction) { //returns new position or -1 if cannot
 
 	if(direction == 'L') return shift_left(position);
 
+	if(DEBUG) cout << "\nThere has been an oof: shift function returning origincal position.i\n";
+
 	return position;
 }
 
 bool array_full(char array[],unsigned int position)
 {
-	position = go_to(1);
+	position = go_to(position,1);
 	while(position != 20)
 	{
-		if(test_empty())
+		if(test_empty(position,array))
 		{
 			return false;
 		}
-		else if (!test_empty())
+		else if (!test_empty(position,array))
 		{
 			if(!can_i_go(position,'R'))
 			{
@@ -400,7 +422,17 @@ bool array_full(char array[],unsigned int position)
 		}
 	}
 }
+unsigned int go_to(unsigned int position, unsigned int destination) { //returns the new position
 
+	do {
+		position = shift(position, 'L'); }
+	while(position != 1);
+
+	while(position != destination) {
+		position = shift(position, 'R'); }
+
+	return position;
+}
 
 int main()
 {
