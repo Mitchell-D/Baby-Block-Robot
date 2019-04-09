@@ -334,14 +334,5 @@ char get_block_testfive(void)
 	return test_case_five[index++];
 }
 
-//Miscellaneous Low Level Functions
 
-bool can_i_go(int position, char direction) {
-
-	if(position == 20 && direction == 'R') return false;
-
-	if(position == 1 && direction == 'L') return false;
-
-	return true;
-}
 
