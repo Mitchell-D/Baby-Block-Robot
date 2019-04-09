@@ -355,7 +355,7 @@ bool can_i_go(int position, char direction) {
 bool is_next_empty(int position, char direction) {
 
 	if(direction == 'R') {
-		position = 
+		position =
 
 }
 
@@ -370,6 +370,36 @@ int shift(int position, char direction) { //returns new position or -1 if cannot
 	return position;
 }
 
+bool array_full(char array[],unsigned int position)
+{
+	position = go_to(1);
+	while(position != 20)
+	{
+		if(test_empty())
+		{
+			return false;
+		}
+		else if (!test_empty())
+		{
+			if(!can_i_go(position,'R'))
+			{
+				return true;
+			}
+			else if(can_i_go(position,'R'))
+			{
+				shift(position,'R');
+			}
+			else
+			{
+				cerr << "circumstantial oof" << endl;
+			}
+		}
+		else
+		{
+			cerr << "circumstantial oof" << endl;
+		}
+	}
+}
 
 
 int main()
