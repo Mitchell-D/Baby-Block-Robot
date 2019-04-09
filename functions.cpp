@@ -30,6 +30,8 @@ char get_block(void)
 //
 // Example function call: print_slots(slot_array);
 
+//Ben was here
+
 void print_slots(char slots[])
 {
 	unsigned int j = 1;
