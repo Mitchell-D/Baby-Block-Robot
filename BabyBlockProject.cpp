@@ -355,18 +355,18 @@ char get_block_testfive(void)
 char get_direction(unsigned int position, char array[]) { //returns the most efficient direction to shift in, or the only possible one
 
 	//check for any spaces to the left
-	
+
 	int start = position;
 
 	for(int i = 0; i < 20; i++) { //assumes shift will return position if at the end
 
-		
+
 		if(position == 1) {
 			cout << "\n\nNo spaces to the left.\n\n";
 			go_to(position, start);
 			return 'R'; }
 
-		
+
 		position = shift(position, 'L');
 		if(test_empty(position-1, array)) break; //test_empty says zero is position one
 	}
@@ -374,21 +374,21 @@ char get_direction(unsigned int position, char array[]) { //returns the most eff
 	position = go_to(position, start);
 
 	//check for any spaces to the right
-	if(DEBUG) cout << "\n\nChecking right.\n\n";	
+	if(DEBUG) cout << "\n\nChecking right.\n\n";
 	for(int i = 0; i < 20; i++) {
-		
+
 			if(position == 20) {
 			if(DEBUG) cout << endl << endl << "No spaces to the right.\n\n";
 			go_to(position, start);
 			return 'L'; }
 
 		position = shift(position, 'R');
-	
+
 		if(test_empty(position-1, array)) break;
 	}
 
 	position = go_to(position, start);
-	
+
 	if(DEBUG) cout << endl << endl << "Spaces on either side of index " << start << endl << endl;
 
 	int left = 0; //represents the number of spots til a space on the left
@@ -399,7 +399,7 @@ char get_direction(unsigned int position, char array[]) { //returns the most eff
 		position = shift(position, 'L');
 		left++;
 		if(test_empty(position-1, array)) break;
-	}	
+	}
 
 	position = go_to(position, start);
 
@@ -505,29 +505,32 @@ unsigned int go_to(unsigned int position, unsigned int destination) { //returns 
 
 char cascade_move(char array[], char direction, char robot, char position)
 {
-	if(test_empty(position,array))
+	while(true)
 	{
-		put_block(robot,position,array);
-		return ' ';
-	}
-	else if(can_i_go(position,direction))
-	{
-		if(is_next_empty(position,direction,array))
+		if(test_empty(position,array))
 		{
-			robot = switch_blocks(robot,position,array);
-			position = shift(position,direction);
 			put_block(robot,position,array);
-			print_slots(array);
-			return robot;
+			return ' ';
 		}
-		else if(is_next_empty(position,direction,array))
+		else if(can_i_go(position,direction))
 		{
-			robot = switch_blocks(robot,position,array);
-			position = shift(position,direction);
-			print_slots(array);
+			if(is_next_empty(position,direction,array))
+			{
+				robot = switch_blocks(robot,position,array);
+				position = shift(position,direction);
+				position = put_block(robot,position,array);
+				print_slots(array);
+				return ' ';
+			}
+			else if(is_next_empty(position,direction,array))
+			{
+				robot = switch_blocks(robot,position,array);
+				position = shift(position,direction);
+				print_slots(array);
+			}
 		}
+		//return robot;
 	}
-	//return robot;
 }
 
 
@@ -536,10 +539,10 @@ int main()
 
 	char arr[20];
 	for(int  i = 0; i < 20; i++) {
-	
+
 		arr[i] = ' ';
 	}
-		
+
 
 	arr[5] = 'G';
 	arr[6] = 'H';
