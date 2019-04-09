@@ -10,7 +10,7 @@
 #include <iomanip>
 #include <string>
 
-#define DEBUG 1
+#define DEBUG 0
 
 unsigned int shift(unsigned int position, char direction);
 bool can_i_go(unsigned int position, char direction);
@@ -374,11 +374,11 @@ char get_direction(unsigned int position, char array[]) { //returns the most eff
 	position = go_to(position, start);
 
 	//check for any spaces to the right
-	cout << "\n\nChecking right.\n\n";	
+	if(DEBUG) cout << "\n\nChecking right.\n\n";	
 	for(int i = 0; i < 20; i++) {
 		
 			if(position == 20) {
-			cout << endl << endl << "No spaces to the right.\n\n";
+			if(DEBUG) cout << endl << endl << "No spaces to the right.\n\n";
 			go_to(position, start);
 			return 'L'; }
 
@@ -527,12 +527,30 @@ char cascade_move(char array[], char direction, char robot, char position)
 			print_slots(array);
 		}
 	}
-	return robot;
+	//return robot;
 }
 
 
 int main()
 {
+
+	char arr[20];
+	for(int  i = 0; i < 20; i++) {
+	
+		arr[i] = ' ';
+	}
+		
+
+	arr[5] = 'G';
+	arr[6] = 'H';
+	arr[7] = 'I';
+	arr[8] = 'J';
+
+	unsigned int index = 7;
+
+	print_slots(arr);
+	cascade_move(arr, get_direction(index, arr), 'K', index);
+	print_slots(arr);
 
 	return 0;
 }
