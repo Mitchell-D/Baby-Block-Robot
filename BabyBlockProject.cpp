@@ -1,4 +1,3 @@
-
 // ------------------------------------------------------------------------ //
 //									    //
 //									    //
@@ -57,6 +56,7 @@ void print_slots(char slots[])
 		cout << setw(3) << slots[j];
 	}
 	cout << endl;
+
 }
 
 // Function put_block
@@ -348,6 +348,75 @@ char get_block_testfive(void)
 	return test_case_five[index++];
 }
 
+//Get Direction
+
+char get_direction(unsigned int position, char array[]) { //returns the most efficient direction to shift in, or the only possible one
+
+	//check for any spaces to the left
+	
+	int start = position;
+
+	for(int i = 0; i < 20; i++) { //assumes shift will return position if at the end
+
+		
+		if(position == 1) {
+			cout << "\n\nNo spaces to the left.\n\n";
+			go_to(position, start);
+			return 'R'; }
+
+		
+		position = shift(position, 'L');
+		if(test_empty(position-1, array)) break; //test_empty says zero is position one
+	}
+
+	position = go_to(position, start);
+
+	//check for any spaces to the right
+	cout << "\n\nChecking right.\n\n";	
+	for(int i = 0; i < 20; i++) {
+		
+		
+
+
+
+		if(position == 20) {
+			cout << endl << endl << "No spaces to the right.\n\n";
+			go_to(position, start);
+			return 'L'; }
+
+		position = shift(position, 'R');
+	
+		if(test_empty(position-1, array)) break;
+	}
+
+	position = go_to(position, start);
+	
+	if(DEBUG) cout << endl << endl << "Spaces on either side of index " << start << endl << endl;
+
+	int left = 0; //represents the number of spots til a space on the left
+	int right = 0; //same for the right side
+
+	while(true) {
+
+		position = shift(position, 'L');
+		left++;
+		if(test_empty(position-1, array)) break;
+	}	
+
+	position = go_to(position, start);
+
+	while(true) {
+		position = shift(position, 'R');
+		right++;
+		if(test_empty(position-1, array)) break;
+	}
+
+	position = go_to(position, start);
+
+	if(right >= left) return 'R';
+	return 'L';
+}
+
 //Misc. Low Level Functions
 
 bool can_i_go(unsigned int position, char direction) { 
@@ -365,12 +434,12 @@ bool is_next_empty(unsigned int position, char direction, char array[]) { //assu
 
 	if(direction == 'R') {
 		position = shift(position, 'R');
-		retval = test_empty(position, array);
+		retval = test_empty(position-1, array);
 		position = shift(position, 'L');
 	}
 	else if(direction == 'L') {
 		position = shift(position, 'L');
-		retval = test_empty(position, array);
+		retval = test_empty(position-1, array);
 		position = shift(position, 'R');
 	}
 
@@ -379,6 +448,8 @@ bool is_next_empty(unsigned int position, char direction, char array[]) { //assu
 }
 
 unsigned int shift(unsigned int position, char direction) { //returns new position or -1 if cannot move
+
+	if(DEBUG) cout << "\nShifting " << direction << endl;
 
 	if(!can_i_go(position, direction)) return position;
 
