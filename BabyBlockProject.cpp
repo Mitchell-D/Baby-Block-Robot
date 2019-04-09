@@ -333,3 +333,22 @@ char get_block_testfive(void)
 	char test_case_five[21] = "XXXAAAZZZAAYYVVVVQQQ";
 	return test_case_five[index++];
 }
+
+//Misc. Low Level Functions
+
+bool can_i_go(int position, char direction) { 
+
+	if(position == 20 && direction == 'R') return false;
+	
+	if(position == 1 && direction == 'L') return false;
+
+	return true;
+}
+
+int shift(int position, char direction) {
+
+	if(direction == 'R') return shift_right(position);
+
+	if(direction == 'L') return shift_left(position);
+
+	return 0;
