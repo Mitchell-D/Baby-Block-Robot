@@ -6,7 +6,12 @@
 //									    //
 //									    //
 // ------------------------------------------------------------------------ //
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+#include <string>
 
+using namespace std;
 //
 // Function get_block
 // Reads in a single character value from the keyboard
@@ -216,7 +221,9 @@ bool test_empty(unsigned int position, char array[])
 {
 	char blank = ' '; // Blank space
 	bool debug = true;
-	if  (array[position] == NULL || array[position] == blank)
+// REPLACED INITIAL IF LITERAL WITH THE FOLLOWING; DOES NOT COMPILE WHEN TESTING EQUIVELENCY WITH NULL
+//	if  (array[position] == NULL || array[position] == blank)
+	if (array[position] == blank)
 	{
 		if (debug)
 			cout << "Slot " << position << " empty. " << endl;
@@ -352,3 +359,9 @@ int shift(int position, char direction) {
 	if(direction == 'L') return shift_left(position);
 
 	return 0;
+}
+
+int main()
+{
+	return 0;
+}
