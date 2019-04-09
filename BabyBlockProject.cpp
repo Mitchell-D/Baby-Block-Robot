@@ -352,14 +352,25 @@ bool can_i_go(int position, char direction) {
 	return true;
 }
 
-int shift(int position, char direction) {
+bool is_next_empty(int position, char direction) {
+
+	if(direction == 'R') {
+		position = 
+
+}
+
+int shift(int position, char direction) { //returns new position or -1 if cannot move
+
+	if(!can_i_go(position, direction)) return position;
 
 	if(direction == 'R') return shift_right(position);
 
 	if(direction == 'L') return shift_left(position);
 
-	return 0;
+	return position;
 }
+
+
 
 int main()
 {
