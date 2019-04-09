@@ -343,7 +343,7 @@ char get_block_testfive(void)
 
 //Misc. Low Level Functions
 
-bool can_i_go(int position, char direction) { 
+bool can_i_go(unsigned int position, char direction) { 
 
 	if(position == 20 && direction == 'R') return false;
 	
@@ -352,14 +352,26 @@ bool can_i_go(int position, char direction) {
 	return true;
 }
 
-bool is_next_empty(int position, char direction) {
+bool is_next_empty(unsigned int position, char direction, char array[]) { //assumes not at end, if at end it will return the state of the current slot
+
+	bool retval = false;
 
 	if(direction == 'R') {
-		position = 
+		position =  shift(position, direction);
+		retval = test_empty(position, array);
+		position = shift(position, 'L');
+	}
+	else if(direction == 'L') {
+		position = shift(position, direction);
+		retval = test_empty(position, array);
+		position = shift(position, 'R');
+	}
+
+	return retval;
 
 }
 
-int shift(int position, char direction) { //returns new position or -1 if cannot move
+unsigned int shift(unsigned int position, char direction) { //returns new position or -1 if cannot move
 
 	if(!can_i_go(position, direction)) return position;
 
@@ -370,7 +382,17 @@ int shift(int position, char direction) { //returns new position or -1 if cannot
 	return position;
 }
 
+unsigned int go_to(unsigned int position, unsigned int destination) { //returns the new position
+	
+	do {
+		position = shift(position, 'L'); }
+	while(position != 1);
 
+	while(position != destination) {
+		position = shift(position, 'R'); }
+
+	return position;
+}
 
 int main()
 {
