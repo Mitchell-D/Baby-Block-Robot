@@ -340,3 +340,7 @@ char get_block_testfive(void)
 	char test_case_five[21] = "XXXAAAZZZAAYYVVVVQQQ";
 	return test_case_five[index++];
 }
+int main()
+{
+	return 0;
+}
