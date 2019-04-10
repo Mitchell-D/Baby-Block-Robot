@@ -569,9 +569,9 @@ int main()
 	arr[8] = 'M';
 	arr[9] = 'J';
 	arr[10] = 'K';
-	
+
 	print_slots(arr);
-	
+
 	cascade_move(arr, 'R', 'N', 8);
 
 	print_slots(arr);
@@ -591,7 +591,7 @@ int main()
 
 		arr[i] = ' ';
 	}
-		
+
 	while(array_full(arr, position)) {
 
 		robot = get_block_testone();
