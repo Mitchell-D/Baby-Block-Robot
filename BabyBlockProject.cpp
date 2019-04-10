@@ -17,7 +17,7 @@ bool can_i_go(unsigned int position, char direction);
 unsigned int go_to(unsigned int position, unsigned int destination);
 bool is_next_empty(unsigned int position, char direction, char array[]);
 bool array_full(char array[],unsigned int position);
-unsigned int get_spot_to_place(unsigned int position, char robot,char array[])
+unsigned int get_spot_to_place(unsigned int position, char robot,char array[]);
 char cascade_move(char array[], char direction, char robot, char position);
 
 using namespace std;
@@ -457,7 +457,7 @@ unsigned int shift(unsigned int position, char direction) { //returns new positi
 bool array_full(char array[],unsigned int position)
 {
 	position = go_to(position,1);
-	while(position != 20)
+	while(position != 20) //should be 21?
 	{
 		if(test_empty(position,array))
 		{
@@ -531,7 +531,7 @@ unsigned int get_spot_to_place(unsigned int position, char robot,char array[])
 	position = go_to(position,10);
 	while(true)
 	{
-		if(test_empty(position,array[]))
+		if(test_empty(position,array))
 		{
 			return position;
 		}
@@ -547,7 +547,7 @@ unsigned int get_spot_to_place(unsigned int position, char robot,char array[])
 		{
 			while(!robot_ltoreq_slot(robot,position))
 			{
-				position = shift(position,'R')
+				position = shift(position,'R');
 			}
 		}
 	}
@@ -555,37 +555,12 @@ unsigned int get_spot_to_place(unsigned int position, char robot,char array[])
 
 int main()
 {
-
-
-
-	char arr[20];
-
-	for(int i = 0; i < 20; i++) {
-		arr[i] = ' ';
-	}
-
-	arr[5] = 'G';
-	arr[6] = 'K';
-	arr[7] = 'L';
-	arr[8] = 'M';
-	arr[9] = 'J';
-	arr[10] = 'K';
-
-	print_slots(arr);
-
-	cascade_move(arr, 'R', 'N', 8);
-
-	print_slots(arr);
-
-	return 0;
-
-
 	unsigned int position = 0;
 
 	cout <<"Enter starting position: ";
 	cin >> position;
 
-	//char arr[20];
+	char arr[20];
 	char robot = ' ';
 
 	for(int  i = 0; i < 20; i++) {
@@ -594,10 +569,11 @@ int main()
 	}
 
 	while(array_full(arr, position)) {
+		cout << "i run";
 
 		robot = get_block_testone();
 
-		//position = go_to(get_block_to_place(position, arr));
+		position = go_to(position, get_spot_to_place(position, robot, arr));
 
 		cascade_move(arr, get_direction(position, arr), robot, position);
 	}
