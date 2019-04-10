@@ -19,6 +19,8 @@ bool is_next_empty(unsigned int position, char direction, char array[]);
 bool array_full(char array[],unsigned int position);
 unsigned int get_spot_to_place(unsigned int position, char robot,char array[]);
 char cascade_move(char array[], char direction, char robot, char position);
+bool is_there_space(char direction, unsigned int position,char array);
+char get_direction(unsigned int position, char robot, char array[]);
 
 using namespace std;
 //
@@ -344,88 +346,71 @@ char get_block_testfive(void)
 	return test_case_five[index++];
 }
 
+bool is_there_space(char direction, unsigned int position,char array[])
+{
+//	go_to(position,final_position);
+
+	if(test_empty(position, array)) return true;
+
+	if (direction == 'R')
+	{
+		do
+		{
+			position = shift(position,'R');
+			if(test_empty(position,array));
+			{
+				return true;
+			}
+		}
+		while(position < 19);
+	}
+	if (direction == 'L')
+	{
+		do
+		{
+			position = shift(position,'L');
+			if(test_empty(position,array));
+			{
+				return true;
+			}
+		}
+		while(position > 0);
+	}
+	return false;
+}
+
+
 //Get Direction
 
-char get_direction(unsigned int position, char array[]) { //returns the most efficient direction to shift in, or the only possible one
 
-	/*//check for any spaces to the left
+///
+/// WHERE WE LEFT OFF: we have a good idea of where we need to shift, however the edge case of if there is no space to shift in the preferred direction (meaning must shift in the opposite direction) requires that position is incremented by one position in the opposite direction of the prefered (but impossible) direction
+///
 
-	int start = position;
-
-	for(int i = 0; i < 20; i++) { //assumes shift will return position if at the end
-
-
-		if(position == 0) {
-			cout << "\n\nNo spaces to the left.\n\n";
-			go_to(position, start);
-			return 'R'; }
-
-
-		position = shift(position, 'L');
-		if(test_empty(position, array)) break; //test_empty says zero is position one
+char get_direction(unsigned int position, char robot, char array[])
+{
+	if(robot_ltoreq_slot(robot,array[position]))
+	{
+		if(!is_there_space('R',position,array))
+		{
+			return 'L'; // needs to increment position L
+		}
+		else
+		{
+			return 'R'; // don't need to increment
+		}
 	}
-
-	position = go_to(position, start);
-
-	//check for any spaces to the right
-	if(DEBUG) cout << "\n\nChecking right.\n\n";
-	for(int i = 0; i < 20; i++) {
-
-			if(position == 19) {
-			if(DEBUG) cout << endl << endl << "No spaces to the right.\n\n";
-			go_to(position, start);
-			return 'L'; }
-
-		position = shift(position, 'R');
-
-		if(test_empty(position, array)) break;
+	else if(!robot_ltoreq_slot(robot,array[position]))
+	{
+		if(!is_there_space('L',position,array))
+		{
+			return 'R'; // needs to increment position R
+		}
+		else
+		{
+			return 'L'; // don't need to increment
+		}
 	}
-
-	position = go_to(position, start);
-
-	if(DEBUG) cout << endl << endl << "Spaces on either side of index " << start << endl << endl;
-
-	int left = 0; //represents the number of spots til a space on the left
-	int right = 0; //same for the right side
-
-	while(true) {
-
-		position = shift(position, 'L');
-		left++;
-		if(test_empty(position, array)) break;
-	}
-
-	position = go_to(position, start);
-
-	while(true) {
-		position = shift(position, 'R');
-		right++;
-		if(test_empty(position, array)) break;
-	}
-
-	position = go_to(position, start);
-
-	if(right >= left) return 'R';
-	return 'L';*/
-
-	int start = position;
-
-	for(int i = 0; i < 20; i++) { //assumes shift will return position if at the end
-
-
-		if(position == 19) {
-			cout << "\n\nNo spaces to the right.\n\n";
-			go_to(position, start);
-			return 'L'; }
-
-
-		position = shift(position, 'R');
-		if(test_empty(position, array)) break;
-
-
-	}
-
-	return 'R';
 }
 
 //Misc. Low Level Functions
@@ -522,15 +507,15 @@ unsigned int go_to(unsigned int position, unsigned int destination) { //returns 
 
 char cascade_move(char array[], char direction, char robot, unsigned int position)
 {
-	
+
 	//direction = 'L';
-	
+
 	while(true)
 	{
 		if(test_empty(position,array))
 		{
 			put_block(robot,position,array);
-			
+
 			print_slots(array);
 			return ' ';
 		}
@@ -556,62 +541,37 @@ char cascade_move(char array[], char direction, char robot, unsigned int positio
 }
 unsigned int get_spot_to_place(unsigned int position, char robot,char array[])
 {
-
 	position = go_to(position,10);
-	//while(true)
-	//{
+
+	while (true)
+	{
 		if(test_empty(position,array))
 		{
 			return position;
 		}
-		else if (robot_ltoreq_slot(robot,array[position]))
-		{
-			while(robot_ltoreq_slot(robot,array[position]))
-			{
-				
-				if(test_empty(position, array) || !can_i_go(position, 'L')) break;
-				position = shift(position,'L');
-			}
-		}
 		else if (!robot_ltoreq_slot(robot,array[position]))
 		{
-			
-
-			while(!robot_ltoreq_slot(robot,array[position]))
+			position = shift(position,'R');
+			if(robot_ltoreq_slot(robot,array[position]))
 			{
-				//cout << "\nGet Spot loop\n"; 
-				if(test_empty(position, array))
-				{
-					return position;
-				}
-				else if(position == 19)
-				{
-						
-					position = go_to(position,18);
-					return position;
-
-				//cout << "\nposition 1: " << position;
-
-					break;
-				}
-				//int t;
-				//cin >> t;
-				position = shift(position,'R');
-
-
+				return position;
 			}
 		}
-
-		
-		cout << endl << "position 2: " << position << endl;
-		return position;
-	//}
+		else if (robot_ltoreq_slot(robot,array[position]))
+		{
+			position = shift(position,'L');
+			if (!robot_ltoreq_slot(robot,array[position]))
+			{
+				return position;
+			}
+		}
+	}
 }
 
 int main()
 {
-	
-	
+
+
 	/*char arr[20];
 
 	for(int i = 0; i < 20; i++) arr[i] = ' ';
@@ -634,7 +594,7 @@ int main()
 
 	//return 0;
 	*/
-	
+
 	unsigned int position = 0;
 
 	cout <<"Enter starting position: ";
@@ -648,7 +608,7 @@ int main()
 		arr[i] = ' ';
 	}
 
-	
+
 	int temp;
 
 
@@ -657,20 +617,20 @@ int main()
 
 
 		cout << "i run";
-		
+
 		robot = get_block_testone();
-		
+
 		cout << "block = " << robot;
-		
+
 		//cin >> temp;
 
 		cout << "\nPlacing at "<< get_spot_to_place(position,robot,arr) << endl;
-		
+
 		cout << endl <<"ran get spot to place" << endl;
 
 		position = go_to(position, get_spot_to_place(position, robot, arr));
 
-		cascade_move(arr, get_direction(position, arr), robot, position);
+		cascade_move(arr, get_direction(position,robot, arr), robot, position);
 	}
 
 
