@@ -76,9 +76,8 @@ void print_slots(char slots[])
 
 unsigned int put_block(char block, unsigned int position, char array[])
 {
-	bool debug = true;
 	array[position] = block;
-	if (debug)
+	if (DEBUG)
 		cout << "Block " << block << " inserted into slot " << position << endl;
 	return position;
 }
@@ -98,11 +97,10 @@ unsigned int put_block(char block, unsigned int position, char array[])
 
 unsigned int remove_block(unsigned int position, char array[])
 {
-	bool debug = true;
 	char block = ' ';
 	block = array[position];
 	array[position] = ' ';  // Reset slot to blank after block removed
-	if (debug)
+	if (DEBUG)
 		cout << "Block " << block << " removed from slot " << position + 1 << endl;
 	return block;
 }
@@ -123,9 +121,8 @@ unsigned int remove_block(unsigned int position, char array[])
 
 unsigned int shift_right(unsigned int position)
 {
-	bool debug = true;
 	position++;
-	if (debug)
+	if (DEBUG)
 		cout << "Position right shifted to " << position << endl;
 	return position;
 }
@@ -145,9 +142,8 @@ unsigned int shift_right(unsigned int position)
 
 unsigned int shift_left(unsigned int position)
 {
-	bool debug = true;
 	position--;
-	if (debug)
+	if (DEBUG)
 		cout << "Position left shifted to " << position << endl;
 	return position;
 }
@@ -169,18 +165,17 @@ unsigned int shift_left(unsigned int position)
 //
 bool robot_ltoreq_slot(char robot, char in_slot)
 {
-	bool debug = true;
-	if (debug)
+	if (DEBUG)
 		cout << endl <<  "Comparing robot block " << robot << " with block in slot " << in_slot << endl;
 	if (robot <= in_slot)
 	{
-		if (debug)
+		if (DEBUG)
 			cout << "Returning true. Robot block LESS than or EQUAL to block in slot. " << endl;
 		return true;
 	}
 	else
 	{
-		if (debug)
+		if (DEBUG)
 			cout << "Returning false. Robot block GREATER than block in slot. " << endl;
 		return false;
 	}
@@ -203,8 +198,7 @@ bool robot_ltoreq_slot(char robot, char in_slot)
 char switch_blocks(char robot, unsigned int position, char array[])
 {
 	char temp_hold;
-	bool debug = true;
-	if (debug)
+	if (DEBUG)
 		cout << "Switching blocks " << robot << " with " << array[position] << endl;
 	temp_hold = robot;
 	robot = array[position];
@@ -229,18 +223,17 @@ char switch_blocks(char robot, unsigned int position, char array[])
 bool test_empty(unsigned int position, char array[])
 {
 	char blank = ' '; // Blank space
-	bool debug = true;
 // REPLACED INITIAL IF LITERAL WITH THE FOLLOWING; DOES NOT COMPILE WHEN TESTING EQUIVELENCY WITH NULL
 //	if  (array[position] == NULL || array[position] == blank)
 	if (array[position] == blank)
 	{
-		if (debug)
+		if (DEBUG)
 			cout << "Slot " << position << " empty. " << endl;
 		return true;
 	}
 	else
 	{
-		if (debug)
+		if (DEBUG)
 			cout << "Slot " << position << " contains a block " << endl;
 		return false;
 	}
@@ -522,7 +515,7 @@ char cascade_move(char array[], char direction, char robot, unsigned int positio
 				print_slots(array);
 				return ' ';
 			}
-			else if(is_next_empty(position,direction,array))
+			else
 			{
 				robot = switch_blocks(robot,position,array);
 				position = shift(position,direction);
@@ -562,23 +555,52 @@ unsigned int get_spot_to_place(unsigned int position, char robot,char array[])
 int main()
 {
 
+
+
 	char arr[20];
+
+	for(int i = 0; i < 20; i++) {
+		arr[i] = ' ';
+	}
+
+	arr[5] = 'G';
+	arr[6] = 'K';
+	arr[7] = 'L';
+	arr[8] = 'M';
+	arr[9] = 'J';
+	arr[10] = 'K';
+	
+	print_slots(arr);
+	
+	cascade_move(arr, 'R', 'N', 8);
+
+	print_slots(arr);
+
+	return 0;
+
+
+	unsigned int position = 0;
+
+	cout <<"Enter starting position: ";
+	cin >> position;
+
+	//char arr[20];
+	char robot = ' ';
+
 	for(int  i = 0; i < 20; i++) {
 
 		arr[i] = ' ';
 	}
+		
+	while(array_full(arr, position)) {
 
+		robot = get_block_testone();
 
-	arr[5] = 'G';
-	arr[6] = 'H';
-	arr[7] = 'I';
-	arr[8] = 'J';
+		//position = go_to(get_block_to_place(position, arr));
 
-	unsigned int index = 7;
+		cascade_move(arr, get_direction(position, arr), robot, position);
+	}
 
-	print_slots(arr);
-	cascade_move(arr, get_direction(index, arr), 'K', index);
-	print_slots(arr);
 
 	return 0;
 }
