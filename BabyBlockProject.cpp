@@ -503,7 +503,7 @@ unsigned int go_to(unsigned int position, unsigned int destination) { //returns 
 	return position;
 }
 
-char cascade_move(char array[], char direction, char robot, char position)
+char cascade_move(char array[], char direction, char robot, unsigned int position)
 {
 	while(true)
 	{
@@ -532,7 +532,32 @@ char cascade_move(char array[], char direction, char robot, char position)
 		//return robot;
 	}
 }
-
+unsigned int get_spot_to_place(unsigned int position, char robot,char array[])
+{
+	position = go_to(position,10);
+	while(true)
+	{
+		if(test_empty(position,array[]))
+		{
+			return position;
+		}
+		else if (robot_ltoreq_slot(robot,position))
+		{
+			while(robot_ltoreq_slot(robot,position))
+			{
+				position = shift(position,'L');
+			}
+			return position;
+		}
+		else if (!robot_ltoreq_slot(robot,position))
+		{
+			while(!robot_ltoreq_slot(robot,position))
+			{
+				position = shift(position,'R')
+			}
+		}
+	}
+}
 
 int main()
 {
