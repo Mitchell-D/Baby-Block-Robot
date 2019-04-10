@@ -48,8 +48,8 @@ char get_block(void)
 
 void print_slots(char slots[])
 {
-	unsigned int j = 1;
-	for (j = 1; j <= 20; j++)
+	unsigned int j = 0;
+	for (j = 0; j < 20; j++)
 	{
 		cout << setw(3) << j;
 	}
@@ -348,21 +348,21 @@ char get_block_testfive(void)
 
 char get_direction(unsigned int position, char array[]) { //returns the most efficient direction to shift in, or the only possible one
 
-	//check for any spaces to the left
+	/*//check for any spaces to the left
 
 	int start = position;
 
 	for(int i = 0; i < 20; i++) { //assumes shift will return position if at the end
 
 
-		if(position == 1) {
+		if(position == 0) {
 			cout << "\n\nNo spaces to the left.\n\n";
 			go_to(position, start);
 			return 'R'; }
 
 
 		position = shift(position, 'L');
-		if(test_empty(position-1, array)) break; //test_empty says zero is position one
+		if(test_empty(position, array)) break; //test_empty says zero is position one
 	}
 
 	position = go_to(position, start);
@@ -371,14 +371,14 @@ char get_direction(unsigned int position, char array[]) { //returns the most eff
 	if(DEBUG) cout << "\n\nChecking right.\n\n";
 	for(int i = 0; i < 20; i++) {
 
-			if(position == 20) {
+			if(position == 19) {
 			if(DEBUG) cout << endl << endl << "No spaces to the right.\n\n";
 			go_to(position, start);
 			return 'L'; }
 
 		position = shift(position, 'R');
 
-		if(test_empty(position-1, array)) break;
+		if(test_empty(position, array)) break;
 	}
 
 	position = go_to(position, start);
@@ -392,7 +392,7 @@ char get_direction(unsigned int position, char array[]) { //returns the most eff
 
 		position = shift(position, 'L');
 		left++;
-		if(test_empty(position-1, array)) break;
+		if(test_empty(position, array)) break;
 	}
 
 	position = go_to(position, start);
@@ -400,22 +400,41 @@ char get_direction(unsigned int position, char array[]) { //returns the most eff
 	while(true) {
 		position = shift(position, 'R');
 		right++;
-		if(test_empty(position-1, array)) break;
+		if(test_empty(position, array)) break;
 	}
 
 	position = go_to(position, start);
 
 	if(right >= left) return 'R';
-	return 'L';
+	return 'L';*/
+
+	int start = position;
+
+	for(int i = 0; i < 20; i++) { //assumes shift will return position if at the end
+
+
+		if(position == 19) {
+			cout << "\n\nNo spaces to the right.\n\n";
+			go_to(position, start);
+			return 'L'; }
+
+
+		position = shift(position, 'R');
+		if(test_empty(position, array)) break;
+
+
+	}
+
+	return 'R';
 }
 
 //Misc. Low Level Functions
 
 bool can_i_go(unsigned int position, char direction) {
 
-	if(position == 20 && direction == 'R') return false;
+	if(position == 19 && direction == 'R') return false;
 
-	if(position == 1 && direction == 'L') return false;
+	if(position == 0 && direction == 'L') return false;
 
 	return true;
 }
@@ -426,12 +445,12 @@ bool is_next_empty(unsigned int position, char direction, char array[]) { //assu
 
 	if(direction == 'R') {
 		position = shift(position, 'R');
-		retval = test_empty(position-1, array);
+		retval = test_empty(position, array);
 		position = shift(position, 'L');
 	}
 	else if(direction == 'L') {
 		position = shift(position, 'L');
-		retval = test_empty(position-1, array);
+		retval = test_empty(position, array);
 		position = shift(position, 'R');
 	}
 
@@ -457,7 +476,7 @@ unsigned int shift(unsigned int position, char direction) { //returns new positi
 bool array_full(char array[],unsigned int position)
 {
 	position = go_to(position,1);
-	while(position != 20) //should be 21?
+	while(position != 19)
 	{
 		if(test_empty(position,array))
 		{
@@ -471,7 +490,7 @@ bool array_full(char array[],unsigned int position)
 			}
 			else if(can_i_go(position,'R'))
 			{
-				shift(position,'R');
+				position = shift(position,'R');
 			}
 			else
 			{
@@ -485,25 +504,34 @@ bool array_full(char array[],unsigned int position)
 	}
 	return false;
 }
+
 unsigned int go_to(unsigned int position, unsigned int destination) { //returns the new position
+
+	if(DEBUG) cout << "\nDestination = " << destination;
 
 	do {
 		position = shift(position, 'L'); }
-	while(position != 1);
+	while(position != 0);
 
-	while(position != destination) {
+	while(position < destination) {
 		position = shift(position, 'R'); }
+
 
 	return position;
 }
 
 char cascade_move(char array[], char direction, char robot, unsigned int position)
 {
+	
+	//direction = 'L';
+	
 	while(true)
 	{
 		if(test_empty(position,array))
 		{
 			put_block(robot,position,array);
+			
+			print_slots(array);
 			return ' ';
 		}
 		else if(can_i_go(position,direction))
@@ -528,39 +556,91 @@ char cascade_move(char array[], char direction, char robot, unsigned int positio
 }
 unsigned int get_spot_to_place(unsigned int position, char robot,char array[])
 {
+
 	position = go_to(position,10);
-	while(true)
-	{
+	//while(true)
+	//{
 		if(test_empty(position,array))
 		{
 			return position;
 		}
-		else if (robot_ltoreq_slot(robot,position))
+		else if (robot_ltoreq_slot(robot,array[position]))
 		{
-			while(robot_ltoreq_slot(robot,position))
+			while(robot_ltoreq_slot(robot,array[position]))
 			{
+				
+				if(test_empty(position, array) || !can_i_go(position, 'L')) break;
 				position = shift(position,'L');
 			}
-			return position;
 		}
-		else if (!robot_ltoreq_slot(robot,position))
+		else if (!robot_ltoreq_slot(robot,array[position]))
 		{
-			while(!robot_ltoreq_slot(robot,position))
+			
+
+			while(!robot_ltoreq_slot(robot,array[position]))
 			{
+				//cout << "\nGet Spot loop\n"; 
+				if(test_empty(position, array))
+				{
+					return position;
+				}
+				else if(position == 19)
+				{
+						
+					position = go_to(position,18);
+					return position;
+
+				//cout << "\nposition 1: " << position;
+
+					break;
+				}
+				//int t;
+				//cin >> t;
 				position = shift(position,'R');
+
+
 			}
 		}
-	}
+
+		
+		cout << endl << "position 2: " << position << endl;
+		return position;
+	//}
 }
 
 int main()
 {
+	
+	
+	/*char arr[20];
+
+	for(int i = 0; i < 20; i++) arr[i] = ' ';
+
+
+	arr[8] = 'H';
+	arr[9] = 'I';
+	arr[10] = 'J';
+	arr[11] = 'K';
+	arr[12] = 'M';
+
+	print_slots(arr);
+
+	unsigned int position = 7;
+
+	//cascade_move(arr, 'R', 'L',position);
+	cout << endl << "\n" << get_spot_to_place(7,'L',arr) << endl;
+
+	print_slots(arr);
+
+	//return 0;
+	*/
+	
 	unsigned int position = 0;
 
 	cout <<"Enter starting position: ";
 	cin >> position;
 
-	char arr[20];
+	char arr[19];
 	char robot = ' ';
 
 	for(int  i = 0; i < 20; i++) {
@@ -568,10 +648,25 @@ int main()
 		arr[i] = ' ';
 	}
 
-	while(array_full(arr, position)) {
-		cout << "i run";
+	
+	int temp;
 
+
+
+	while(!array_full(arr, position)) {
+
+
+		cout << "i run";
+		
 		robot = get_block_testone();
+		
+		cout << "block = " << robot;
+		
+		//cin >> temp;
+
+		cout << "\nPlacing at "<< get_spot_to_place(position,robot,arr) << endl;
+		
+		cout << endl <<"ran get spot to place" << endl;
 
 		position = go_to(position, get_spot_to_place(position, robot, arr));
 
