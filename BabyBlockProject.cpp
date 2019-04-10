@@ -17,6 +17,7 @@ bool can_i_go(unsigned int position, char direction);
 unsigned int go_to(unsigned int position, unsigned int destination);
 bool is_next_empty(unsigned int position, char direction, char array[]);
 bool array_full(char array[],unsigned int position);
+unsigned int get_spot_to_place(unsigned int position, char robot,char array[])
 char cascade_move(char array[], char direction, char robot, char position);
 
 using namespace std;
