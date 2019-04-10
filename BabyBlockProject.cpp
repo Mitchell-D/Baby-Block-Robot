@@ -17,7 +17,7 @@ bool can_i_go(unsigned int position, char direction);
 unsigned int go_to(unsigned int position, unsigned int destination);
 bool is_next_empty(unsigned int position, char direction, char array[]);
 bool array_full(char array[],unsigned int position);
-unsigned int get_spot_to_place(unsigned int position, char robot,char array[]);
+unsigned int get_spot_to_place(unsigned int start, unsigned int position, char robot,char array[]);
 char cascade_move(char array[], char direction, char robot, char position);
 
 using namespace std;
@@ -414,7 +414,7 @@ char get_direction(unsigned int position, char array[]) { //returns the most eff
 
 
 		if(position == 19) {
-			cout << "\n\nNo spaces to the right.\n\n";
+			if(DEBUG) cout << "\n\nNo spaces to the right.\n\n";
 			go_to(position, start);
 			return 'L'; }
 
@@ -522,7 +522,7 @@ unsigned int go_to(unsigned int position, unsigned int destination) { //returns 
 
 char cascade_move(char array[], char direction, char robot, unsigned int position)
 {
-	
+	static int switches = 0;
 	//direction = 'L';
 	
 	while(true)
@@ -539,6 +539,10 @@ char cascade_move(char array[], char direction, char robot, unsigned int positio
 			if(is_next_empty(position,direction,array))
 			{
 				robot = switch_blocks(robot,position,array);
+				
+				switches++;
+				cout << endl << "Swapping blocks, number of swaps: " << switches << endl << endl;
+
 				position = shift(position,direction);
 				position = put_block(robot,position,array);
 				print_slots(array);
@@ -547,6 +551,10 @@ char cascade_move(char array[], char direction, char robot, unsigned int positio
 			else
 			{
 				robot = switch_blocks(robot,position,array);
+				
+				switches++;
+				cout << endl << "Swapping blocks, number of swaps: " << switches << endl << endl;
+				
 				position = shift(position,direction);
 				print_slots(array);
 			}
@@ -554,10 +562,10 @@ char cascade_move(char array[], char direction, char robot, unsigned int positio
 		//return robot;
 	}
 }
-unsigned int get_spot_to_place(unsigned int position, char robot,char array[])
+unsigned int get_spot_to_place(unsigned int start, unsigned int position, char robot,char array[])
 {
 
-	position = go_to(position,10);
+	position = go_to(position,start);
 	//while(true)
 	//{
 		if(test_empty(position,array))
@@ -587,7 +595,6 @@ unsigned int get_spot_to_place(unsigned int position, char robot,char array[])
 				else if(position == 19)
 				{
 						
-					position = go_to(position,18);
 					return position;
 
 				//cout << "\nposition 1: " << position;
@@ -603,7 +610,7 @@ unsigned int get_spot_to_place(unsigned int position, char robot,char array[])
 		}
 
 		
-		cout << endl << "position 2: " << position << endl;
+		//cout << endl << "position 2: " << position << endl;
 		return position;
 	//}
 }
@@ -636,9 +643,10 @@ int main()
 	*/
 	
 	unsigned int position = 0;
-
+	unsigned int start = 0;
+	
 	cout <<"Enter starting position: ";
-	cin >> position;
+	cin >> start;
 
 	char arr[19];
 	char robot = ' ';
@@ -648,27 +656,41 @@ int main()
 		arr[i] = ' ';
 	}
 
-	
-	int temp;
+
+	for(int i =0; i < 20; i++) {
 
 
-
-	while(!array_full(arr, position)) {
-
-
-		cout << "i run";
 		
 		robot = get_block_testone();
 		
-		cout << "block = " << robot;
+		if(DEBUG) cout << "block = " << robot;
 		
 		//cin >> temp;
 
-		cout << "\nPlacing at "<< get_spot_to_place(position,robot,arr) << endl;
+		cout << "\nPlacing " << robot << " at "<< get_spot_to_place(start, position,robot,arr) << endl;
 		
-		cout << endl <<"ran get spot to place" << endl;
+		if(DEBUG) cout << endl <<"ran get spot to place" << endl;
 
-		position = go_to(position, get_spot_to_place(position, robot, arr));
+		position = go_to(position, get_spot_to_place(start, position, robot, arr));
+
+		if(get_direction(position, arr) == 'L' && robot_ltoreq_slot(robot,arr[position])) {
+			
+			position = shift(position, 'L'); 
+			if(robot_ltoreq_slot(robot,arr[position])) {
+
+				position = shift(position, 'R');
+			}
+			else if(DEBUG) cout << endl << "Doing error correction!" << endl;
+		}
+
+		if(get_direction(position, arr) == 'R' && !robot_ltoreq_slot(robot,arr[position])) {
+
+			position = shift(position, 'R');
+			if(!robot_ltoreq_slot(robot,arr[position])) {
+				position = shift(position, 'L'); }
+			else {
+				if(DEBUG) cout << endl << "Doing error correction!" << endl; }
+		}
 
 		cascade_move(arr, get_direction(position, arr), robot, position);
 	}
